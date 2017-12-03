@@ -69,8 +69,18 @@ int countMinChange(vector<int>& coins, int totalSum)
     vector<int> minCounts(totalSum + 1, INT_MAX);
     minCounts[0] = 0;
 
+    // for every coin and for every sum, greater or equal to current coin...
     for (size_t c = 1; c <= coins.size(); c++) {
         for (int sum = coins[c - 1]; sum <= totalSum; sum++) {
+            // We have two ways:
+            // 1. We do not include current coin, and thus minCounts[sum] remains the same
+            // 2. We include current coin, and thus the minCounts[sum] becomes the min count
+            //    value for current sum - value of current coin (cause that was without
+            //    the coin) + 1 (which is current coin).
+            // We decide between #1 and #2, depending on if #2 makes minCounts[sum] smaller than before
+            // as long as the sum without coin's value (minCounts[sum - coins[c - 1]]) was already
+            // calculated, i.e. != initial value (INT_MAX)
+
             if (minCounts[sum - coins[c - 1]] != INT_MAX) {
                 if (minCounts[sum] > minCounts[sum - coins[c - 1]] + 1) {
                     minCounts[sum] = minCounts[sum - coins[c - 1]] + 1;
@@ -100,7 +110,7 @@ int main()
     cout << "Total ways: " << totalWays << endl;
 
     cout << "\nIteratively:\n";
-    totalWays = printAllChanges(coins, totalSum, false);
+    totalWays = printAllChanges(coins, totalSum, true);
     cout << "Total ways: " << totalWays << endl;
 
     int minCount = countMinChange(coins, totalSum);
